@@ -25,7 +25,7 @@ public class WebEndpoints {
                   "message": "Catalog service is currently unavailable. Please try again later."
                 }
                 """;
-                return ServerResponse.status(HttpStatus.OK)
+                return ServerResponse.status(HttpStatus.SERVICE_UNAVAILABLE)
                 .header("Content-Type", "application/json")
                 .body(Mono.just(errorMessage), String.class);
     }
