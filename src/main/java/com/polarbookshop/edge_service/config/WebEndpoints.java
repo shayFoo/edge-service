@@ -26,6 +26,7 @@ public class WebEndpoints {
                 }
                 """;
                 return ServerResponse.status(HttpStatus.OK)
+                .header("Content-Type", "application/json")
                 .body(Mono.just(errorMessage), String.class);
     }
 }
