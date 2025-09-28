@@ -34,13 +34,13 @@ spring:
                       - name: CircuitBreaker
                         args:
                             name: orderCircuitBreaker
-        httpclient:
-          connect-timeout: 2000
-          response-timeout: 5s
-          pool:
-            type: elastic
-            max-idle-time: 15s
-            max-life-time: 60s
+            httpclient:
+              connect-timeout: 2000
+              response-timeout: 5s
+              pool:
+                type: elastic
+                max-idle-time: 15s
+                max-life-time: 60s
         default-filters:
 # https://docs.spring.io/spring-cloud-gateway/reference/spring-cloud-gateway-server-webflux/gatewayfilter-factories/retry-factory.html
           - name: Retry
@@ -67,4 +67,6 @@ resilience4j.timelimiter:
   configs:
     default:
       timeoutDuration: 5s
-
+logging:
+  level:
+    io.github.resilience4j: DEBUG
