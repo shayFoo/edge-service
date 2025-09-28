@@ -20,17 +20,27 @@ spring:
                   uri: ${CATALOG_SERVICE_URL:http://localhost:9001}/books
                   predicates:
                       - Path=/books/**
+                  filters:
+# https://docs.spring.io/spring-cloud-gateway/reference/spring-cloud-gateway-server-webflux/gatewayfilter-factories/circuitbreaker-filter-factory.html
+                    - name: CircuitBreaker
+                      args:
+                        name: catalogCircuitBreaker
+                        fallbackUri: forward:/catalog-fallback
                 - id: order-route
                   uri: ${ORDER_SERVICE_URL:http://localhost:9002}/orders
                   predicates:
                       - Path=/orders/**
-        httpclient:
-          connect-timeout: 2000
-          response-timeout: 5s
-          pool:
-            type: elastic
-            max-idle-time: 15s
-            max-life-time: 60s
+                  filters:
+                      - name: CircuitBreaker
+                        args:
+                            name: orderCircuitBreaker
+            httpclient:
+              connect-timeout: 2000
+              response-timeout: 5s
+              pool:
+                type: elastic
+                max-idle-time: 15s
+                max-life-time: 60s
         default-filters:
 # https://docs.spring.io/spring-cloud-gateway/reference/spring-cloud-gateway-server-webflux/gatewayfilter-factories/retry-factory.html
           - name: Retry
@@ -44,3 +54,19 @@ spring:
                   maxBackoff: 500ms
                   factor: 2
                   basedOnPreviousValue: false
+# https://docs.spring.io/spring-cloud-circuitbreaker/reference/spring-cloud-circuitbreaker-resilience4j/circuit-breaker-properties-configuration.html
+#https://resilience4j.readme.io/docs/getting-started-3#configuration
+resilience4j.circuitbreaker:
+  configs:
+    default:
+      slidingWindowSize: 20
+      permittedNumberOfCallsInHalfOpenState: 5
+      failureRateThreshold: 50
+      waitDurationInOpenState: 15000
+resilience4j.timelimiter:
+  configs:
+    default:
+      timeoutDuration: 5s
+logging:
+  level:
+    io.github.resilience4j: DEBUG
