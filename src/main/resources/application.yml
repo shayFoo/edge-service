@@ -6,83 +6,94 @@ server:
   shutdown: graceful
 
 spring:
-    application:
-      name: edge-service
-    lifecycle:
-      timeout-per-shutdown-phase: 15s
-# https://docs.spring.io/spring-cloud-gateway/reference/appendix.html
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: edge-service
+            client-secret: polar-keycloak-secret
+            scope: openid
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8080/realms/PolarBookshop
+  application:
+    name: edge-service
+  lifecycle:
+    timeout-per-shutdown-phase: 15s
+  # https://docs.spring.io/spring-cloud-gateway/reference/appendix.html
+  config:
+    import: "optional:configserver:"
+  cloud:
     config:
-      import: "optional:configserver:"
-    cloud:
-      config:
-          uri: http://localhost:8888
-          request-connect-timeout: 5000
-          request-read-timeout: 5000
-          fail-fast: false
-          retry:
-            max-attempts: 6
-            initial-interval: 1000
-            max-interval: 2000
-            multiplier: 1.1
-      gateway:
-        server:
-          webflux:
-            routes:
-                - id: catalog-route
-                  uri: ${CATALOG_SERVICE_URL:http://localhost:9001}/books
-                  predicates:
-                      - Path=/books/**
-                  filters:
-# https://docs.spring.io/spring-cloud-gateway/reference/spring-cloud-gateway-server-webflux/gatewayfilter-factories/circuitbreaker-filter-factory.html
-                    - name: CircuitBreaker
-                      args:
-                        name: catalogCircuitBreaker
-                        fallbackUri: forward:/catalog-fallback
-                - id: order-route
-                  uri: ${ORDER_SERVICE_URL:http://localhost:9002}/orders
-                  predicates:
-                      - Path=/orders/**
-                  filters:
-                      - name: CircuitBreaker
-                        args:
-                            name: orderCircuitBreaker
-            httpclient:
-              connect-timeout: 2000
-              response-timeout: 5s
-              pool:
-                type: elastic
-                max-idle-time: 15s
-                max-life-time: 60s
-        default-filters:
-# https://docs.spring.io/spring-cloud-gateway/reference/spring-cloud-gateway-server-webflux/gatewayfilter-factories/retry-factory.html
-          - name: Retry
-            args:
-              retries: 3
-              methods: GET
-              series: SERVER_ERROR
-              exceptions: java.io.IOException,java.util.concurrent.TimeoutException
-              backoff:
-                  firstBackoff: 50ms
-                  maxBackoff: 500ms
-                  factor: 2
-                  basedOnPreviousValue: false
-# https://docs.spring.io/spring-cloud-gateway/reference/spring-cloud-gateway-server-webflux/gatewayfilter-factories/requestratelimiter-factory.html#redis-ratelimiter
-          - name: RequestRateLimiter
-            args:
-              redis-rate-limiter.replenishRate: 10
-              redis-rate-limiter.burstCapacity: 20
-              redis-rate-limiter.requestedTokens: 1
-          - SaveSession
-    data:
-      redis:
-        connect-timeout: 2s
-        host: ${REDIS_HOST:localhost}
-        port: ${REDIS_PORT:6379}
-        timeout: 1s
-    session:
-      timeout: 10m
-      redis:
-        namespace: polar:edge
+      uri: http://localhost:8888
+      request-connect-timeout: 5000
+      request-read-timeout: 5000
+      fail-fast: false
+      retry:
+        max-attempts: 6
+        initial-interval: 1000
+        max-interval: 2000
+        multiplier: 1.1
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: catalog-route
+              uri: ${CATALOG_SERVICE_URL:http://localhost:9001}/books
+              predicates:
+                - Path=/books/**
+              filters:
+                # https://docs.spring.io/spring-cloud-gateway/reference/spring-cloud-gateway-server-webflux/gatewayfilter-factories/circuitbreaker-filter-factory.html
+                - name: CircuitBreaker
+                  args:
+                    name: catalogCircuitBreaker
+                    fallbackUri: forward:/catalog-fallback
+            - id: order-route
+              uri: ${ORDER_SERVICE_URL:http://localhost:9002}/orders
+              predicates:
+                - Path=/orders/**
+              filters:
+                - name: CircuitBreaker
+                  args:
+                    name: orderCircuitBreaker
+          httpclient:
+            connect-timeout: 2000
+            response-timeout: 5s
+            pool:
+              type: elastic
+              max-idle-time: 15s
+              max-life-time: 60s
+      default-filters:
+        # https://docs.spring.io/spring-cloud-gateway/reference/spring-cloud-gateway-server-webflux/gatewayfilter-factories/retry-factory.html
+        - name: Retry
+          args:
+            retries: 3
+            methods: GET
+            series: SERVER_ERROR
+            exceptions: java.io.IOException,java.util.concurrent.TimeoutException
+            backoff:
+              firstBackoff: 50ms
+              maxBackoff: 500ms
+              factor: 2
+              basedOnPreviousValue: false
+        # https://docs.spring.io/spring-cloud-gateway/reference/spring-cloud-gateway-server-webflux/gatewayfilter-factories/requestratelimiter-factory.html#redis-ratelimiter
+        - name: RequestRateLimiter
+          args:
+            redis-rate-limiter.replenishRate: 10
+            redis-rate-limiter.burstCapacity: 20
+            redis-rate-limiter.requestedTokens: 1
+        - SaveSession
+  data:
+    redis:
+      connect-timeout: 2s
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      timeout: 1s
+  session:
+    timeout: 10m
+    redis:
+      namespace: polar:edge
 # https://docs.spring.io/spring-cloud-circuitbreaker/reference/spring-cloud-circuitbreaker-resilience4j/circuit-breaker-properties-configuration.html
 #https://resilience4j.readme.io/docs/getting-started-3#configuration
 resilience4j.circuitbreaker:
