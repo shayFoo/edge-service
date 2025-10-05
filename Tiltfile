@@ -9,7 +9,7 @@ custom_build(
 )
 
 # Deploy
-k8s_yaml(['k8s/deployment.yaml', 'k8s/service.yaml'])
+k8s_yaml(['k8s/deployment.yaml', 'k8s/service.yaml', 'k8s/ingress.yaml'])
 
 # Manage
 k8s_resource(
