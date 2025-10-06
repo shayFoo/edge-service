@@ -1,5 +1,6 @@
 package com.polarbookshop.edge_service.config;
 
+import com.polarbookshop.edge_service.security.csrf.SpaCsrfTokenRequestHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -12,10 +13,17 @@ import org.springframework.security.oauth2.client.registration.ReactiveClientReg
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.HttpStatusServerEntryPoint;
 import org.springframework.security.web.server.authentication.logout.ServerLogoutSuccessHandler;
+import org.springframework.security.web.server.csrf.CookieServerCsrfTokenRepository;
 
 @Configuration
 @EnableWebFluxSecurity
 public class SecurityConfig {
+
+    private final SpaCsrfTokenRequestHandler csrfTokenRequestHandler;
+
+    public SecurityConfig(SpaCsrfTokenRequestHandler csrfTokenRequestHandler) {
+        this.csrfTokenRequestHandler = csrfTokenRequestHandler;
+    }
 
     @Bean
     public SecurityWebFilterChain securityFilterChain(ServerHttpSecurity http,
@@ -29,6 +37,8 @@ public class SecurityConfig {
                 .exceptionHandling(exceptionHandling -> exceptionHandling.authenticationEntryPoint(
                         new HttpStatusServerEntryPoint(HttpStatus.UNAUTHORIZED)
                 ))
+                .csrf(csrf -> csrf.csrfTokenRepository(CookieServerCsrfTokenRepository.withHttpOnlyFalse())
+                        .csrfTokenRequestHandler(csrfTokenRequestHandler))
                 .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
                 .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
                 .oauth2Login(Customizer.withDefaults())

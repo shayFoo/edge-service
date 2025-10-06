@@ -114,9 +114,3 @@ resilience4j.timelimiter:
 logging:
   level:
     io.github.resilience4j: DEBUG
-    org.springframework.security: DEBUG
-    org.springframework.security.web.server: DEBUG
-    org.springframework.security.oauth2.client: DEBUG
-    org.springframework.security.oauth2.core: DEBUG
-    # 必要に応じて個別クラスを TRACE に
-    org.springframework.security.web.server.authentication: TRACE
