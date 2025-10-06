@@ -4,9 +4,9 @@ import java.util.List;
 
 public record User(
         String username,
-        String fullName,
+        String firstName,
         String lastName,
         List<String> roles
 ) {
-    
+
 }
