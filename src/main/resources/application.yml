@@ -88,6 +88,7 @@ spring:
             redis-rate-limiter.burstCapacity: 20
             redis-rate-limiter.requestedTokens: 1
         - SaveSession
+        - TokenRelay
   data:
     redis:
       connect-timeout: 2s
