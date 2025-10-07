@@ -49,6 +49,7 @@ spring:
                   args:
                     name: catalogCircuitBreaker
                     fallbackUri: forward:/catalog-fallback
+                - TokenRelay=
             - id: order-route
               uri: ${ORDER_SERVICE_URL:http://localhost:9002}/orders
               predicates:
@@ -57,8 +58,10 @@ spring:
                 - name: CircuitBreaker
                   args:
                     name: orderCircuitBreaker
+                - TokenRelay=
             - id: spa-route
               uri: ${SPA_URL:http://localhost:9004}
+              # SPAにはtokenRelayしない
               predicates:
                 - Path=/,/*.css,/*.js,/favicon.ico
           httpclient:
@@ -88,7 +91,6 @@ spring:
             redis-rate-limiter.burstCapacity: 20
             redis-rate-limiter.requestedTokens: 1
         - SaveSession
-        - TokenRelay
   data:
     redis:
       connect-timeout: 2s
