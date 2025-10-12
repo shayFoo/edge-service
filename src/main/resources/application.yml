@@ -102,6 +102,17 @@ spring:
     timeout: 10m
     redis:
       namespace: polar:edge
+  management:
+    endpoints:
+      web:
+        exposure:
+          include: health
+    endpoint:
+      health:
+        show-details: always
+        show-components: always
+        probes:
+          enabled: true
 # https://docs.spring.io/spring-cloud-circuitbreaker/reference/spring-cloud-circuitbreaker-resilience4j/circuit-breaker-properties-configuration.html
 #https://resilience4j.readme.io/docs/getting-started-3#configuration
 resilience4j.circuitbreaker:
