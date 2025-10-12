@@ -30,6 +30,11 @@ dependencies {
     implementation("org.springframework.session:spring-session-data-redis")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
+    runtimeOnly("io.micrometer:micrometer-registry-prometheus")
+    runtimeOnly("io.micrometer:micrometer-tracing-bridge-otel")
+    runtimeOnly("io.opentelemetry:opentelemetry-exporter-otlp")
+    runtimeOnly("io.github.resilience4j:resilience4j-micrometer")
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.projectreactor:reactor-test")
@@ -51,7 +56,8 @@ tasks.withType<Test> {
 tasks.named<BootBuildImage>("bootBuildImage") {
     environment = mapOf(
         "BP_JVM_VERSION" to "25",
-        "BP_JVM_TIMEZONE" to "Asia/Tokyo",
+        "BPE_DELIM_JAVA_TOOL_OPTIONS" to " ",
+        "BPE_APPEND_JAVA_TOOL_OPTIONS" to "-Duser.timezone=Asia/Tokyo",
         "LANG" to "ja_JP.UTF-8",
         "LANGUAGE" to "ja_JP:ja",
         "LC_ALL" to "ja_JP.UTF-8",

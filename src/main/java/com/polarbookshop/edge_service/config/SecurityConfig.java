@@ -35,6 +35,7 @@ public class SecurityConfig {
                                 .pathMatchers(HttpMethod.GET, "/").permitAll()
                                 .pathMatchers(HttpMethod.GET, "/*.css", "/*.js", "/favicon.ico").permitAll()
                                 .pathMatchers(HttpMethod.GET, "/books/**").permitAll()
+                                .pathMatchers("/actuator/**").permitAll() // in a real app, secure this endpoint(Basic Auth, IP whitelisting, etc.)
                                 .anyExchange().authenticated())
                 .exceptionHandling(exceptionHandling -> exceptionHandling.authenticationEntryPoint(
                         new HttpStatusServerEntryPoint(HttpStatus.UNAUTHORIZED)
