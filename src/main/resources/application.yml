@@ -13,7 +13,7 @@ spring:
           keycloak:
             client-id: edge-service
             client-secret: polar-keycloak-secret
-            scope: openid
+            scope: openid,roles
         provider:
           keycloak:
             issuer-uri: http://localhost:8080/realms/PolarBookshop
@@ -49,6 +49,7 @@ spring:
                   args:
                     name: catalogCircuitBreaker
                     fallbackUri: forward:/catalog-fallback
+                - TokenRelay=
             - id: order-route
               uri: ${ORDER_SERVICE_URL:http://localhost:9002}/orders
               predicates:
@@ -57,8 +58,10 @@ spring:
                 - name: CircuitBreaker
                   args:
                     name: orderCircuitBreaker
+                - TokenRelay=
             - id: spa-route
               uri: ${SPA_URL:http://localhost:9004}
+              # SPAにはtokenRelayしない
               predicates:
                 - Path=/,/*.css,/*.js,/favicon.ico
           httpclient:
