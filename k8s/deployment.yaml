@@ -45,6 +45,8 @@ spec:
           volumeMounts:
             - name: tmp
               mountPath: /tmp
+            - name: edge-config-volume
+              mountPath: /workspace/config
           securityContext:
             allowPrivilegeEscalation: false
             runAsNonRoot: true
@@ -64,3 +66,6 @@ spec:
       volumes:
         - name: tmp
           emptyDir: { }
+        - name: edge-config-volume
+          configMap:
+            name: edge-config
