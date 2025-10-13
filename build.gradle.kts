@@ -24,7 +24,7 @@ repositories {
 extra["springCloudVersion"] = "2025.0.0"
 extra["testcontainers.version"] = "1.21.3"
 dependencies {
-    implementation("org.springframework.cloud:spring-cloud-starter-gateway-server-webflux")
+    implementation("org.springframework.cloud:spring-cloud-starter-gateway-server-webflux:4.3.1")
     implementation("org.springframework.cloud:spring-cloud-starter-circuitbreaker-reactor-resilience4j")
     implementation("org.springframework.boot:spring-boot-starter-data-redis-reactive")
     implementation("org.springframework.cloud:spring-cloud-starter-config")
