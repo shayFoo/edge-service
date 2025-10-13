@@ -1,0 +1,22 @@
+spring:
+  security:
+    oauth2:
+      client:
+        provider:
+          keycloak:
+            issuer-uri: http://polar-keycloak/realms/PolarBookshop
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: catalog-route
+              uri: http://catalog-service:9001/books
+            - id: order-route
+              uri: http://order-service:9002/orders
+            - id: spa-route
+              uri: http://polar-ui:9004
+  data:
+    redis:
+      host: polar-redis
+      port: 6379
