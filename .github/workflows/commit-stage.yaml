@@ -45,7 +45,7 @@ jobs:
           fail-on-invalid-resource: true
   package:
     name: "Package and Publish"
-    if: "${{ github.ref == 'refs/heads/main'}}"
+    if: "${{ github.ref == 'refs/heads/master'}}"
     needs: [ "build" ]
     runs-on: ubuntu-24.04
     permissions:
