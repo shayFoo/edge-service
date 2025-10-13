@@ -13,10 +13,10 @@ spec:
     metadata:
       labels:
         app: edge-service
-    annotations:
-      prometheus.io/scrape: "true"
-      prometheus.io/port: "9001"
-      prometheus.io/path: "/actuator/prometheus"
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9001"
+        prometheus.io/path: "/actuator/prometheus"
     spec:
       securityContext:
         runAsNonRoot: true
