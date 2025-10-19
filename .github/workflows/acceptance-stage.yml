@@ -5,7 +5,7 @@ on:
     types:
       - completed
     branches:
-      - main
+      - master
 env:
   OWNER: shayfoo
   REGISTRY: ghcr.io
